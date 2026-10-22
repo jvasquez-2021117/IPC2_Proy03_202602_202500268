@@ -9,6 +9,7 @@ builder.Services.AddSingleton(new ArchivoRtu(Path.Combine(datos, "rtu.json")));
 builder.Services.AddSingleton(new ArchivoFacturas(Path.Combine(datos, "solicitudes.json")));
 builder.Services.AddSingleton<ServicioRtu>();
 builder.Services.AddSingleton<ServicioFacturas>();
+builder.Services.AddSingleton<ServicioReportes>();
 
 var app = builder.Build();
 app.MapControllers();

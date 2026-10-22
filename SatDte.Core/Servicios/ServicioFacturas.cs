@@ -123,6 +123,30 @@ public sealed class ServicioFacturas
         }
     }
 
+    /// <summary>Instantánea completa para reportes; no aplica el límite de 1000 del historial.</summary>
+    public RegistroFactura[] ObtenerTodos()
+    {
+        lock (_candado)
+        {
+            return _registros.Copiar().Select(r => new RegistroFactura
+            {
+                NumeroSolicitud = r.NumeroSolicitud,
+                FechaRecepcionUtc = r.FechaRecepcionUtc,
+                TiempoOriginal = r.TiempoOriginal,
+                FechaDocumento = r.FechaDocumento,
+                Referencia = r.Referencia,
+                NitEmisor = r.NitEmisor,
+                NitReceptor = r.NitReceptor,
+                Valor = r.Valor,
+                Iva = r.Iva,
+                Total = r.Total,
+                Aprobada = r.Aprobada,
+                CodigoAprobacion = r.CodigoAprobacion,
+                Errores = (string[])r.Errores.Clone()
+            }).ToArray();
+        }
+    }
+
     public int Cantidad
     {
         get { lock (_candado) return _registros.Cantidad; }

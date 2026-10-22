@@ -1,0 +1,49 @@
+@page
+@model SatDte.Web.Pages.ReporteContribuyenteModel
+@{
+    ViewData["Title"] = "Consulta por contribuyente";
+}
+<div class="page-eyebrow">PETICIONES · CONSULTA DE NIT</div>
+<h1 class="page-title">Facturas de un contribuyente</h1>
+<p class="page-description">Consulta las facturas autorizadas que un NIT emitió o recibió dentro de un rango de fechas. Solo se cuentan los DTE aprobados.</p>
+<section class="panel">
+    <form method="get" class="report-filter">
+        <label>NIT <input type="text" name="Nit" value="@Model.Nit" placeholder="7378106" maxlength="21" required /></label>
+        <label>Tipo <select name="Tipo"><option value="emitidas" selected="@(Model.Tipo == "emitidas")">Emitidas</option><option value="recibidas" selected="@(Model.Tipo == "recibidas")">Recibidas</option></select></label>
+        <label>Desde <input type="date" name="Inicio" value="@Model.Inicio" required /></label>
+        <label>Hasta <input type="date" name="Fin" value="@Model.Fin" required /></label>
+        <button type="submit" class="button button-primary">Consultar →</button>
+    </form>
+</section>
+@if (Model.Error is not null) { <div class="alert alert-error" role="alert">@Model.Error</div> }
+@if (Model.Reporte is not null)
+{
+    <div class="report-head"><h2>Resultados — @Model.Reporte.Nombre (@Model.Reporte.Nit)</h2><span class="pill pill-green">@Model.Reporte.Tipo</span></div>
+    <div class="kpi-grid">
+        <div class="kpi"><span>Facturas autorizadas</span><strong>@Model.Reporte.CantidadTotalFacturas</strong></div>
+        <div class="kpi"><span>Monto facturado en el período</span><strong>@Model.Reporte.MontoTotalFacturado.ToString("N2")</strong></div>
+    </div>
+    <section class="panel report-panel">
+        <div class="table-heading"><div><strong>Resumen por fecha</strong><p>Cantidad y valor total facturado por día</p></div></div>
+        @if (Model.Reporte.Dias.Count == 0) { <div class="empty-state"><p>No existen facturas autorizadas para estos filtros.</p></div> }
+        else
+        {
+            <div class="table-responsive"><table><thead><tr><th>Fecha</th><th>Facturas</th><th>Monto facturado</th></tr></thead><tbody>
+            @foreach (var dia in Model.Reporte.Dias) { <tr><td>@dia.Fecha.ToString("dd/MM/yyyy")</td><td>@dia.CantidadFacturas</td><td>@dia.MontoFacturado.ToString("N2")</td></tr> }
+            </tbody></table></div>
+        }
+    </section>
+    <section class="panel report-panel">
+        <div class="table-heading"><div><strong>Detalle de documentos autorizados</strong><p>Facturas que forman el resumen</p></div></div>
+        @if (Model.Reporte.Facturas.Count == 0) { <div class="empty-state"><p>No hay documentos para mostrar.</p></div> }
+        else
+        {
+            <div class="table-responsive"><table><thead><tr><th>Fecha</th><th>Referencia</th><th>NIT contraparte</th><th>Código autorización</th><th>Valor</th><th>IVA</th><th>Total</th></tr></thead><tbody>
+            @foreach (var f in Model.Reporte.Facturas)
+            {
+                <tr><td>@f.Fecha.ToString("dd/MM/yyyy")</td><td>@f.Referencia</td><td><code>@f.NitContraparte</code></td><td><code>@f.CodigoAprobacion</code></td><td>@f.Valor.ToString("N2")</td><td>@f.Iva.ToString("N2")</td><td><strong>@f.Total.ToString("N2")</strong></td></tr>
+            }
+            </tbody></table></div>
+        }
+    </section>
+}

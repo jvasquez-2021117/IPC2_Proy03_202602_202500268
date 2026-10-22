@@ -1,0 +1,30 @@
+@page
+@model SatDte.Web.Pages.ResumenIvaModel
+@{
+    ViewData["Title"] = "IVA por fecha y NIT";
+}
+<div class="page-eyebrow">PETICIONES · RESUMEN DE IVA</div>
+<h1 class="page-title">IVA por fecha y NIT</h1>
+<p class="page-description">Resumen de movimientos autorizados: IVA emitido y recibido por cada NIT durante la fecha seleccionada.</p>
+<section class="panel"><form method="get" class="report-filter"><label>Fecha de facturación <input type="date" name="Fecha" value="@Model.Fecha" required /></label><button type="submit" class="button button-primary">Consultar →</button></form></section>
+@if (Model.Error is not null) { <div class="alert alert-error" role="alert">@Model.Error</div> }
+@if (Model.Reporte is not null)
+{
+    <div class="report-head"><h2>Movimientos del @Model.Reporte.Fecha.ToString("dd/MM/yyyy")</h2></div>
+    <div class="kpi-grid">
+        <div class="kpi"><span>IVA emitido (sumatoria)</span><strong>@Model.Reporte.TotalIvaEmitido.ToString("N2")</strong></div>
+        <div class="kpi"><span>IVA recibido (sumatoria)</span><strong>@Model.Reporte.TotalIvaRecibido.ToString("N2")</strong></div>
+    </div>
+    <section class="panel report-panel">
+        @if (Model.Reporte.Movimientos.Count == 0) { <div class="empty-state"><p>No hay facturas aprobadas con esa fecha.</p></div> }
+        else
+        {
+            <div class="table-responsive"><table><thead><tr><th>NIT</th><th>Contribuyente</th><th>IVA emitido</th><th>IVA recibido</th><th>Diferencia</th></tr></thead><tbody>
+            @foreach (var nit in Model.Reporte.Movimientos)
+            {
+                <tr><td><code>@nit.Nit</code></td><td>@nit.Nombre</td><td>@nit.IvaEmitido.ToString("N2")</td><td>@nit.IvaRecibido.ToString("N2")</td><td>@nit.Diferencia.ToString("N2")</td></tr>
+            }
+            </tbody></table></div>
+        }
+    </section>
+}

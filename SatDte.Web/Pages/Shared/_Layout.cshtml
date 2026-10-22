@@ -25,13 +25,18 @@
                 <a asp-page="/Dte" class="nav-link @(ruta == "/dte" ? "active" : "")"><span class="nav-icon">▣</span>Enviar DTE</a>
                 <a asp-page="/Solicitudes" class="nav-link @(ruta == "/solicitudes" ? "active" : "")"><span class="nav-icon">☷</span>Historial DTE</a>
                 <a asp-page="/Contribuyentes" class="nav-link @(ruta == "/contribuyentes" ? "active" : "")"><span class="nav-icon">◎</span>Contribuyentes</a>
+                <span class="nav-group">PETICIONES Y REPORTES</span>
+                <a asp-page="/ReporteContribuyente" class="nav-link @(ruta == "/reportecontribuyente" ? "active" : "")"><span class="nav-icon">◫</span>Consultar por NIT</a>
+                <a asp-page="/ResumenIva" class="nav-link @(ruta == "/resumeniva" ? "active" : "")"><span class="nav-icon">%</span>Resumen de IVA</a>
+                <a asp-page="/ResumenFechas" class="nav-link @(ruta == "/resumenfechas" ? "active" : "")"><span class="nav-icon">▤</span>Resumen por fechas</a>
+                <a asp-page="/ReporteRecepciones" class="nav-link @(ruta == "/reporterecepciones" ? "active" : "")"><span class="nav-icon">☷</span>Reporte de errores</a>
                 <a asp-page="/Inicializar" class="nav-link @(ruta == "/inicializar" ? "active" : "")"><span class="nav-icon">↻</span>Inicializar</a>
             </nav>
             <div class="nav-heading secondary">RECURSOS</div>
             <nav class="nav-stack" aria-label="Ayuda">
                 <a asp-page="/Ayuda" class="nav-link @(ruta == "/ayuda" ? "active" : "")"><span class="nav-icon">?</span>Ayuda</a>
             </nav>
-            <div class="sidebar-bottom"><span class="status-dot"></span>Release 2 de 4 <small>RTU + Autorización DTE</small></div>
+            <div class="sidebar-bottom"><span class="status-dot"></span>Release 3 de 4 <small>RTU + DTE + Consultas</small></div>
         </aside>
         <div class="work-area">
             <header class="topbar">

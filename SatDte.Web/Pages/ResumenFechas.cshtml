@@ -1,0 +1,35 @@
+@page
+@model SatDte.Web.Pages.ResumenFechasModel
+@{
+    ViewData["Title"] = "Resumen por fechas";
+}
+<div class="page-eyebrow">PETICIONES · RESUMEN AUTORIZADO</div>
+<h1 class="page-title">Resumen por rango de fechas</h1>
+<p class="page-description">Total autorizado por fecha: puedes comparar el monto con IVA (TOTAL) o sin IVA (VALOR). Se excluyen documentos rechazados.</p>
+<section class="panel">
+    <form method="get" class="report-filter">
+        <label>Desde <input type="date" name="Inicio" value="@Model.Inicio" required /></label>
+        <label>Hasta <input type="date" name="Fin" value="@Model.Fin" required /></label>
+        <label>Importe <select name="Modo"><option value="total" selected="@(Model.Modo == "total")">Total con IVA</option><option value="siniva" selected="@(Model.Modo == "siniva")">Valor sin IVA</option></select></label>
+        <button type="submit" class="button button-primary">Consultar →</button>
+    </form>
+</section>
+@if (Model.Error is not null) { <div class="alert alert-error" role="alert">@Model.Error</div> }
+@if (Model.Reporte is not null)
+{
+    <div class="report-head"><h2>Reporte: @Model.Reporte.FechaInicio.ToString("dd/MM/yyyy") - @Model.Reporte.FechaFin.ToString("dd/MM/yyyy")</h2><span class="pill pill-blue">@(Model.Reporte.Modo == "total" ? "Con IVA" : "Sin IVA")</span></div>
+    <div class="kpi-grid">
+        <div class="kpi"><span>Facturas autorizadas</span><strong>@Model.Reporte.CantidadTotalFacturas</strong></div>
+        <div class="kpi"><span>Valor autorizado en el período</span><strong>@Model.Reporte.MontoTotalAutorizado.ToString("N2")</strong></div>
+    </div>
+    <section class="panel report-panel">
+        @if (Model.Reporte.Dias.Count == 0) { <div class="empty-state"><p>No hay facturas aprobadas en el rango indicado.</p></div> }
+        else
+        {
+            <div class="table-responsive"><table><thead><tr><th>Fecha</th><th>Cantidad autorizada</th><th>Importe autorizado</th></tr></thead><tbody>
+            @foreach (var dia in Model.Reporte.Dias)
+            { <tr><td>@dia.Fecha.ToString("dd/MM/yyyy")</td><td>@dia.CantidadFacturas</td><td>@dia.MontoAutorizado.ToString("N2")</td></tr> }
+            </tbody></table></div>
+        }
+    </section>
+}

@@ -1,0 +1,35 @@
+@page
+@model SatDte.Web.Pages.ReporteRecepcionesModel
+@{
+    ViewData["Title"] = "Auditoría de solicitudes";
+}
+<div class="page-eyebrow">PETICIONES · RECEPCIÓN Y ERRORES</div>
+<h1 class="page-title">Reporte diario de recepción</h1>
+<p class="page-description">Total de solicitudes, aprobaciones, emisores y receptores distintos, además de los errores encontrados. Los DTE con fecha inválida se asignan a su fecha de recepción en Guatemala.</p>
+<section class="panel"><form method="get" class="report-filter"><label>Desde <input type="date" name="Inicio" value="@Model.Inicio" required /></label><label>Hasta <input type="date" name="Fin" value="@Model.Fin" required /></label><button type="submit" class="button button-primary">Consultar →</button></form></section>
+@if (Model.Error is not null) { <div class="alert alert-error" role="alert">@Model.Error</div> }
+@if (Model.Reporte is not null)
+{
+    <div class="report-head"><h2>Solicitudes recibidas</h2></div>
+    <div class="kpi-grid"><div class="kpi"><span>Total de solicitudes recibidas</span><strong>@Model.Reporte.TotalRecibidas</strong></div><div class="kpi"><span>Facturas sin errores</span><strong>@Model.Reporte.TotalSinErrores</strong></div></div>
+    @if (Model.Reporte.Dias.Count == 0) { <section class="panel report-panel"><div class="empty-state"><p>No se registraron solicitudes en el rango seleccionado.</p></div></section> }
+    @foreach (var dia in Model.Reporte.Dias)
+    {
+        <section class="panel report-panel">
+            <div class="table-heading"><div><strong>Fecha: @dia.Fecha.ToString("dd/MM/yyyy")</strong><p>Se incluyen las solicitudes rechazadas.</p></div><span class="record-count">@dia.CantidadTotalFacturasRecibidas recibidas</span></div>
+            <div class="kpi-grid compact"><div class="kpi"><span>Sin errores</span><strong>@dia.CantidadFacturasSinErrores</strong></div><div class="kpi"><span>Emisores distintos</span><strong>@dia.CantidadEmisoresDistintos</strong></div><div class="kpi"><span>Receptores distintos</span><strong>@dia.CantidadReceptoresDistintos</strong></div></div>
+            <div class="table-responsive"><table><thead><tr><th>Tipo de error</th><th>Cantidad</th></tr></thead><tbody>
+            <tr><td>NIT emisor inválido</td><td>@dia.Errores.NitEmisorInvalido</td></tr>
+            <tr><td>NIT receptor inválido</td><td>@dia.Errores.NitReceptorInvalido</td></tr>
+            <tr><td>NIT emisor inexistente</td><td>@dia.Errores.NitEmisorInexistente</td></tr>
+            <tr><td>NIT receptor inexistente</td><td>@dia.Errores.NitReceptorInexistente</td></tr>
+            <tr><td>IVA mal calculado</td><td>@dia.Errores.IvaMalCalculado</td></tr>
+            <tr><td>TOTAL mal calculado</td><td>@dia.Errores.TotalMalCalculado</td></tr>
+            <tr><td>REFERENCIA duplicada</td><td>@dia.Errores.ReferenciaDuplicada</td></tr>
+            <tr><td>Fecha inválida (adicional)</td><td>@dia.Errores.FechaInvalida</td></tr>
+            <tr><td>Referencia inválida (adicional)</td><td>@dia.Errores.ReferenciaInvalida</td></tr>
+            <tr><td>Valor inválido (adicional)</td><td>@dia.Errores.ValorInvalido</td></tr>
+            </tbody></table></div>
+        </section>
+    }
+}

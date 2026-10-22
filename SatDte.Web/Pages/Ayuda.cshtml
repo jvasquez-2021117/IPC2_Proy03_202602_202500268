@@ -8,7 +8,7 @@
 <p class="page-description">Información del estudiante, funcionamiento de la API e instrucciones generales.</p>
 <div class="two-column">
     <section class="panel"><div class="panel-header"><span class="panel-step">i</span><div><h2>Información del estudiante</h2><p>Completa con tus datos antes de la entrega final.</p></div></div>
-        <dl class="info-grid"><dt>Universidad</dt><dd>Universidad de San Carlos de Guatemala</dd><dt>Curso</dt><dd>Introducción a la Programación y Computación 2</dd><dt>Nombre</dt><dd><em>Pendiente: ingresar nombre</em></dd><dt>Carné</dt><dd><em>Pendiente: ingresar carné</em></dd><dt>Sección</dt><dd><em>Pendiente: ingresar sección</em></dd><dt>Versión</dt><dd>Release 2 / 4</dd></dl>
+        <dl class="info-grid"><dt>Universidad</dt><dd>Universidad de San Carlos de Guatemala</dd><dt>Curso</dt><dd>Introducción a la Programación y Computación 2</dd><dt>Nombre</dt><dd><em>Pendiente: ingresar nombre</em></dd><dt>Carné</dt><dd><em>Pendiente: ingresar carné</em></dd><dt>Sección</dt><dd><em>Pendiente: ingresar sección</em></dd><dt>Versión</dt><dd>Release 3 / 4</dd></dl>
     </section>
     <section class="panel"><div class="panel-header"><span class="panel-step alt">?</span><div><h2>Documentación y API</h2><p>Material incluido con la solución</p></div></div>
         <ul class="rules-list"><li><strong>Documentacion/:</strong> el ensayo y diagrama de clases se añadirán en la entrega final.</li><li><strong>Ejemplos/:</strong> archivos de carga y casos de prueba.</li><li><strong>Servicio HTTP:</strong> API independiente, accesible con Postman.</li></ul>
@@ -16,5 +16,9 @@
         <div class="api-preview"><span>POST</span> http://localhost:5175/api/rtu/importar</div>
         <div class="api-preview"><span>POST</span> http://localhost:5175/api/dte/autorizar</div>
         <div class="api-preview"><span>GET</span> http://localhost:5175/api/dte/solicitudes</div>
+        <div class="api-preview"><span>GET</span> /api/reportes/contribuyente?nit=7378106&amp;tipo=emitidas&amp;inicio=2025-01-15&amp;fin=2025-01-16</div>
+        <div class="api-preview"><span>GET</span> /api/reportes/iva?fecha=2025-01-15</div>
+        <div class="api-preview"><span>GET</span> /api/reportes/rango?inicio=2025-01-15&amp;fin=2025-01-16&amp;modo=total</div>
+        <div class="api-preview"><span>GET</span> /api/reportes/recepciones?inicio=2025-01-15&amp;fin=2025-01-16</div>
     </section>
 </div>

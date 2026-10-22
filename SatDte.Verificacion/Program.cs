@@ -192,7 +192,129 @@ try
     loteMixto.Reiniciar();
 
 
-    Console.WriteLine($"\nRESULTADO: {pasadas} verificaciones correctas. Releases 1 y 2 OK.");
+    Console.WriteLine("\nPRUEBAS RELEASE 3 — REPORTES Y CONSULTAS");
+    ArchivoRtu archivoRtuReportes = new(Path.Combine(carpeta, "rtu_reportes.json"));
+    ServicioRtu rtuReportes = new(archivoRtuReportes);
+    rtuReportes.Importar(new List<ContribuyenteEntrada?>
+    {
+        new() { Nit = "7378106", Nombre = "Empresa ABC" },
+        new() { Nit = "8338817", Nombre = "Empresa XYZ" }
+    });
+    ArchivoFacturas archivoReportes = new(Path.Combine(carpeta, "facturas_reportes.json"));
+    ServicioFacturas servicioReportesDte = new(archivoReportes, rtuReportes, () => new DateTime(2026, 10, 21, 9, 0, 0));
+    FacturaEntrada FacturaReporte(string tiempo, string referencia, string emisor, string receptor,
+        decimal valor, decimal iva, decimal total) => new()
+        { Tiempo = "Guatemala, " + tiempo + " hrs.", Referencia = referencia,
+          NitEmisor = emisor, NitReceptor = receptor, Valor = valor, Iva = iva, Total = total };
+    var loteReportes = new List<FacturaEntrada?>
+    {
+        FacturaReporte("15/01/2025 09:00", "R3-001", "7378106", "8338817", 100m, 12m, 112m),
+        FacturaReporte("15/01/2025 10:30", "R3-002", "7378106", "8338817", 200m, 24m, 224m),
+        FacturaReporte("15/01/2025 11:15", "R3-003", "8338817", "7378106", 50m, 6m, 56m),
+        FacturaReporte("16/01/2025 12:45", "R3-004", "7378106", "8338817", 75m, 9m, 84m),
+        FacturaReporte("16/01/2025 13:45", "R3-ERROR-IVA", "7378106", "8338817", 100m, 11m, 111m),
+        FacturaReporte("16/01/2025 14:10", "R3-ERROR-TOTAL", "7378106", "8338817", 100m, 12m, 113m)
+    };
+    RespuestaAutorizaciones autorizacionesR3 = servicioReportesDte.Procesar(loteReportes);
+    Afirmar(autorizacionesR3.ResultadoAutorizaciones.CantidadAutorizacionesAprobadas == 4,
+        "Cuatro facturas aprobadas para los nuevos reportes");
+    Afirmar(servicioReportesDte.Cantidad == 6, "Se almacenan cuatro aprobaciones y dos rechazos");
+
+    DateOnly quince = new(2025, 1, 15);
+    DateOnly dieciseis = new(2025, 1, 16);
+    ServicioReportes reportes = new(servicioReportesDte, rtuReportes);
+    ReporteContribuyente emitidas = reportes.ConsultarContribuyente("7378106", true, quince, dieciseis);
+    Afirmar(emitidas.CantidadTotalFacturas == 3 && emitidas.MontoTotalFacturado == 420m,
+        "Emitidas del contribuyente: 3 documentos y 420.00");
+    Afirmar(emitidas.Dias.Count == 2 && emitidas.Dias[0].CantidadFacturas == 2 &&
+        emitidas.Dias[0].MontoFacturado == 336m && emitidas.Dias[1].MontoFacturado == 84m,
+        "Emitidas agrupadas correctamente por fecha del DTE");
+    Afirmar(emitidas.Facturas.Count == 3 && emitidas.Facturas[0].CodigoAprobacion != 0,
+        "Consulta presenta listado detallado con código de autorización");
+    ReporteContribuyente recibidas = reportes.ConsultarContribuyente("7378106", false, quince, dieciseis);
+    Afirmar(recibidas.CantidadTotalFacturas == 1 && recibidas.MontoTotalFacturado == 56m,
+        "Recibidas del mismo contribuyente: 1 documento y 56.00");
+    Afirmar(recibidas.Facturas[0].NitContraparte == "8338817", "NIT contraparte en recibidas");
+    ReporteContribuyente soloDia = reportes.ConsultarContribuyente("7378106", true, quince, quince);
+    Afirmar(soloDia.CantidadTotalFacturas == 2 && soloDia.MontoTotalFacturado == 336m,
+        "Extremos de rango inclusivos en consulta por NIT");
+
+    ResumenIvaFecha ivaQuince = reportes.ConsultarIva(quince);
+    MovimientoIvaNit ivaA = ivaQuince.Movimientos.Single(x => x.Nit == "7378106");
+    MovimientoIvaNit ivaB = ivaQuince.Movimientos.Single(x => x.Nit == "8338817");
+    Afirmar(ivaQuince.Movimientos.Count == 2 && ivaA.IvaEmitido == 36m && ivaA.IvaRecibido == 6m,
+        "IVA emitido y recibido para el NIT A");
+    Afirmar(ivaA.Diferencia == 30m && ivaB.IvaEmitido == 6m && ivaB.IvaRecibido == 36m &&
+        ivaB.Diferencia == -30m, "IVA y saldo del NIT B");
+    Afirmar(ivaQuince.TotalIvaEmitido == 42m && ivaQuince.TotalIvaRecibido == 42m,
+        "Conservación del IVA global emitido y recibido");
+    ResumenIvaFecha ivaDieciseis = reportes.ConsultarIva(dieciseis);
+    Afirmar(ivaDieciseis.TotalIvaEmitido == 9m && ivaDieciseis.TotalIvaRecibido == 9m,
+        "DTE rechazados no contaminan IVA del día siguiente");
+
+    ResumenRangoFechas montosTotales = reportes.ConsultarRango(quince, dieciseis, false);
+    ResumenRangoFechas montosSinIva = reportes.ConsultarRango(quince, dieciseis, true);
+    Afirmar(montosTotales.CantidadTotalFacturas == 4 && montosTotales.MontoTotalAutorizado == 476m,
+        "Total autorizado con IVA: 476.00 y 4 facturas");
+    Afirmar(montosTotales.Dias.Count == 2 && montosTotales.Dias[0].MontoAutorizado == 392m &&
+        montosTotales.Dias[1].MontoAutorizado == 84m, "Total por día con IVA");
+    Afirmar(montosSinIva.MontoTotalAutorizado == 425m && montosSinIva.Dias[0].MontoAutorizado == 350m &&
+        montosSinIva.Dias[1].MontoAutorizado == 75m, "Valor autorizado sin IVA por día y global");
+    Afirmar(montosTotales.MontoTotalAutorizado - montosSinIva.MontoTotalAutorizado == 51m,
+        "Diferencia del período equivalente al IVA aprobado");
+
+    ReporteRecepciones auditoria = reportes.ConsultarRecepciones(quince, dieciseis);
+    Afirmar(auditoria.TotalRecibidas == 6 && auditoria.TotalSinErrores == 4,
+        "Auditoría cuenta intentos y aprobaciones");
+    Afirmar(auditoria.Dias.Count == 2 && auditoria.Dias[0].CantidadTotalFacturasRecibidas == 3 &&
+        auditoria.Dias[0].CantidadFacturasSinErrores == 3,
+        "Fecha 15: tres recibidas sin errores");
+    Afirmar(auditoria.Dias[0].CantidadEmisoresDistintos == 2 &&
+        auditoria.Dias[0].CantidadReceptoresDistintos == 2,
+        "NIT emisores/receptores distintos por fecha");
+    Afirmar(auditoria.Dias[1].CantidadTotalFacturasRecibidas == 3 &&
+        auditoria.Dias[1].CantidadFacturasSinErrores == 1 &&
+        auditoria.Dias[1].Errores.IvaMalCalculado == 1 &&
+        auditoria.Dias[1].Errores.TotalMalCalculado == 1,
+        "Fecha 16: un aprobado, un error IVA y un error TOTAL");
+
+    ServicioFacturas recuperadoReportes = new(archivoReportes, rtuReportes, () => new DateTime(2026, 10, 22));
+    ServicioReportes reportePersistido = new(recuperadoReportes, rtuReportes);
+    Afirmar(reportePersistido.ConsultarRango(quince, dieciseis, false).MontoTotalAutorizado == 476m,
+        "Reporte idéntico tras recuperar el almacenamiento persistente");
+    Afirmar(reportePersistido.ConsultarRango(new DateOnly(2024, 1, 1), new DateOnly(2024, 12, 31), false)
+        .Dias.Count == 0, "Rango sin movimientos regresa lista vacía");
+    bool nitDesconocido = false;
+    try { reportePersistido.ConsultarContribuyente("6K", true, quince, dieciseis); }
+    catch (KeyNotFoundException) { nitDesconocido = true; }
+    Afirmar(nitDesconocido, "NIT no registrado genera respuesta controlable para la API");
+    bool rangoInvertido = false;
+    try { reportePersistido.ConsultarRango(dieciseis, quince, false); }
+    catch (ArgumentException) { rangoInvertido = true; }
+    Afirmar(rangoInvertido, "Rangos invertidos son rechazados");
+
+    // Un documento con fecha inválida cuenta para la auditoría en su fecha de recepción local.
+    ArchivoFacturas archivoFechaInvalida = new(Path.Combine(carpeta, "invalida_fecha.json"));
+    archivoFechaInvalida.Guardar(new[]
+    {
+        new RegistroFactura
+        {
+            NumeroSolicitud = 1, FechaDocumento = null,
+            FechaRecepcionUtc = new DateTime(2025, 1, 16, 2, 0, 0, DateTimeKind.Utc),
+            Referencia = "INVALIDA-FECHA", Aprobada = false,
+            Errores = new[] { "FECHA_INVALIDA" }
+        }
+    });
+    ServicioReportes fechasInvalidas = new(new ServicioFacturas(archivoFechaInvalida, rtuReportes), rtuReportes);
+    ReporteRecepciones auditoriaFechaInvalida = fechasInvalidas.ConsultarRecepciones(quince, quince);
+    Afirmar(auditoriaFechaInvalida.TotalRecibidas == 1 &&
+        auditoriaFechaInvalida.Dias[0].Errores.FechaInvalida == 1,
+        "Fechas DTE inválidas se auditan según fecha de recepción Guatemala");
+    recuperadoReportes.Reiniciar();
+    Afirmar(reportePersistido.ConsultarRango(quince, dieciseis, false).MontoTotalAutorizado == 0m,
+        "Reportes cambian al inicializar las solicitudes");
+
+    Console.WriteLine($"\nRESULTADO: {pasadas} verificaciones correctas. Releases 1, 2 y 3 OK.");
     return 0;
 }
 catch (Exception ex)
