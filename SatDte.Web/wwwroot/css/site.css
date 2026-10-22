@@ -144,3 +144,12 @@ td code{font-family:Consolas,monospace;color:#3152b9;font-size:12px;background:#
 .kpi-grid.compact strong{font-size:20px}
 .nav-group{font-size:10px;letter-spacing:1.2px;color:#8296bd;margin:16px 10px 5px;font-weight:800}
 @media(max-width:700px){.report-filter{display:grid;grid-template-columns:1fr}.report-filter label{min-width:0}.kpi-grid{grid-template-columns:1fr}}
+
+/* Release 4: gráficas SVG integradas y acciones para descargar PDF. */
+.chart-panel{overflow:hidden}
+.chart-scroll{width:100%;overflow-x:auto;overflow-y:hidden;border:1px solid #edf1fa;border-radius:10px;padding:10px;background:linear-gradient(180deg,#fff,#fafdff)}
+.chart-svg{display:block;max-width:none;font-family:Arial,Helvetica,sans-serif}
+.chart-empty{padding:25px;color:#8190a5;text-align:center}
+.chart-note{margin:13px 0 0;color:#8795aa;font-size:12px}
+.report-actions{display:flex;align-items:center;gap:11px;flex-wrap:wrap}
+@media(max-width:700px){.report-actions{width:100%}.report-actions>.button{flex:1}}

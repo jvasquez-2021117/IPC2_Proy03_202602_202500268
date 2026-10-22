@@ -17,4 +17,10 @@ public sealed class ReporteRecepcionesModel : ConsultaApiPageModel
         Reporte = await ObtenerAsync<ReporteRecepciones>(
             $"api/reportes/recepciones?inicio={Inicio}&fin={Fin}");
     }
+    public async Task<IActionResult> OnGetPdfAsync()
+    {
+        if (!ValidarFechas(Inicio, Fin)) return BadRequest("Rango inválido para descargar el reporte.");
+        return await DescargarPdfAsync($"api/reportes/recepciones/pdf?inicio={Inicio}&fin={Fin}", "reporte-recepciones.pdf");
+    }
+
 }

@@ -19,4 +19,11 @@ public sealed class ResumenFechasModel : ConsultaApiPageModel
         Reporte = await ObtenerAsync<ResumenRangoFechas>(
             $"api/reportes/rango?inicio={Inicio}&fin={Fin}&modo={Modo}");
     }
+    public async Task<IActionResult> OnGetPdfAsync()
+    {
+        if (!ValidarFechas(Inicio, Fin) || Modo is not ("total" or "siniva"))
+            return BadRequest("Filtros inválidos para descargar el resumen por fechas.");
+        return await DescargarPdfAsync($"api/reportes/rango/pdf?inicio={Inicio}&fin={Fin}&modo={Modo}", "resumen-fechas.pdf");
+    }
+
 }

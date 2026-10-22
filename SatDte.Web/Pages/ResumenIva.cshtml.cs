@@ -15,4 +15,10 @@ public sealed class ResumenIvaModel : ConsultaApiPageModel
         if (!FechaValida(Fecha)) { Error = "Introduce una fecha válida."; return; }
         Reporte = await ObtenerAsync<ResumenIvaFecha>("api/reportes/iva?fecha=" + Fecha);
     }
+    public async Task<IActionResult> OnGetPdfAsync()
+    {
+        if (!FechaValida(Fecha)) return BadRequest("Fecha inválida para descargar el resumen de IVA.");
+        return await DescargarPdfAsync("api/reportes/iva/pdf?fecha=" + Fecha, "resumen-iva.pdf");
+    }
+
 }

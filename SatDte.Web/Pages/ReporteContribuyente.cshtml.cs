@@ -22,4 +22,13 @@ public sealed class ReporteContribuyenteModel : ConsultaApiPageModel
         Reporte = await ObtenerAsync<ReporteContribuyente>(
             $"api/reportes/contribuyente?nit={Uri.EscapeDataString(Nit.Trim())}&tipo={Tipo}&inicio={Inicio}&fin={Fin}");
     }
+    public async Task<IActionResult> OnGetPdfAsync()
+    {
+        if (!ValidarFechas(Inicio, Fin) || string.IsNullOrWhiteSpace(Nit) ||
+            Tipo is not ("emitidas" or "recibidas"))
+            return BadRequest("Filtros inválidos para descargar facturas por NIT.");
+        string ruta = $"api/reportes/contribuyente/pdf?nit={Uri.EscapeDataString(Nit.Trim())}&tipo={Tipo}&inicio={Inicio}&fin={Fin}";
+        return await DescargarPdfAsync(ruta, "facturas-contribuyente.pdf");
+    }
+
 }

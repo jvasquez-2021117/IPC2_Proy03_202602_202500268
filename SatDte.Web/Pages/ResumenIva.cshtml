@@ -10,11 +10,16 @@
 @if (Model.Error is not null) { <div class="alert alert-error" role="alert">@Model.Error</div> }
 @if (Model.Reporte is not null)
 {
-    <div class="report-head"><h2>Movimientos del @Model.Reporte.Fecha.ToString("dd/MM/yyyy")</h2></div>
+    <div class="report-head"><h2>Movimientos del @Model.Reporte.Fecha.ToString("dd/MM/yyyy")</h2><a class="button button-secondary" asp-page-handler="Pdf" asp-route-Fecha="@Model.Fecha">Descargar PDF ↓</a></div>
     <div class="kpi-grid">
         <div class="kpi"><span>IVA emitido (sumatoria)</span><strong>@Model.Reporte.TotalIvaEmitido.ToString("N2")</strong></div>
         <div class="kpi"><span>IVA recibido (sumatoria)</span><strong>@Model.Reporte.TotalIvaRecibido.ToString("N2")</strong></div>
     </div>
+    <section class="panel report-panel chart-panel">
+        <div class="table-heading"><div><strong>Gráfica comparativa de IVA</strong><p>IVA emitido y recibido por cada NIT. El detalle exacto está en la tabla inferior.</p></div></div>
+        <div class="chart-scroll">@Html.Raw(SatDte.Web.Servicios.GraficasSvg.Iva(Model.Reporte))</div>
+        @if (Model.Reporte.Movimientos.Count > 30) { <p class="chart-note">La gráfica muestra los primeros 30 contribuyentes; la tabla incluye todos.</p> }
+    </section>
     <section class="panel report-panel">
         @if (Model.Reporte.Movimientos.Count == 0) { <div class="empty-state"><p>No hay facturas aprobadas con esa fecha.</p></div> }
         else

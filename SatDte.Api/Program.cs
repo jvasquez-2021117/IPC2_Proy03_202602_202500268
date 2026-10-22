@@ -1,4 +1,5 @@
 using SatDte.Core.Persistencia;
+using SatDte.Core.Exportacion;
 using SatDte.Core.Servicios;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -10,6 +11,7 @@ builder.Services.AddSingleton(new ArchivoFacturas(Path.Combine(datos, "solicitud
 builder.Services.AddSingleton<ServicioRtu>();
 builder.Services.AddSingleton<ServicioFacturas>();
 builder.Services.AddSingleton<ServicioReportes>();
+builder.Services.AddSingleton<GeneradorReportesPdf>();
 
 var app = builder.Build();
 app.MapControllers();

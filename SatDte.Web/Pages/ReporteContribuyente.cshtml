@@ -18,7 +18,7 @@
 @if (Model.Error is not null) { <div class="alert alert-error" role="alert">@Model.Error</div> }
 @if (Model.Reporte is not null)
 {
-    <div class="report-head"><h2>Resultados — @Model.Reporte.Nombre (@Model.Reporte.Nit)</h2><span class="pill pill-green">@Model.Reporte.Tipo</span></div>
+    <div class="report-head"><h2>Resultados — @Model.Reporte.Nombre (@Model.Reporte.Nit)</h2><div class="report-actions"><span class="pill pill-green">@Model.Reporte.Tipo</span><a class="button button-secondary" asp-page-handler="Pdf" asp-route-Nit="@Model.Nit" asp-route-Tipo="@Model.Tipo" asp-route-Inicio="@Model.Inicio" asp-route-Fin="@Model.Fin">Descargar PDF ↓</a></div></div>
     <div class="kpi-grid">
         <div class="kpi"><span>Facturas autorizadas</span><strong>@Model.Reporte.CantidadTotalFacturas</strong></div>
         <div class="kpi"><span>Monto facturado en el período</span><strong>@Model.Reporte.MontoTotalFacturado.ToString("N2")</strong></div>

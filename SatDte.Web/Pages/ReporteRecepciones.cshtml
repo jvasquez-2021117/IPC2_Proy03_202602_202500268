@@ -10,7 +10,7 @@
 @if (Model.Error is not null) { <div class="alert alert-error" role="alert">@Model.Error</div> }
 @if (Model.Reporte is not null)
 {
-    <div class="report-head"><h2>Solicitudes recibidas</h2></div>
+    <div class="report-head"><h2>Solicitudes recibidas</h2><a class="button button-secondary" asp-page-handler="Pdf" asp-route-Inicio="@Model.Inicio" asp-route-Fin="@Model.Fin">Descargar PDF ↓</a></div>
     <div class="kpi-grid"><div class="kpi"><span>Total de solicitudes recibidas</span><strong>@Model.Reporte.TotalRecibidas</strong></div><div class="kpi"><span>Facturas sin errores</span><strong>@Model.Reporte.TotalSinErrores</strong></div></div>
     @if (Model.Reporte.Dias.Count == 0) { <section class="panel report-panel"><div class="empty-state"><p>No se registraron solicitudes en el rango seleccionado.</p></div></section> }
     @foreach (var dia in Model.Reporte.Dias)

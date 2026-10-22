@@ -21,7 +21,7 @@ public sealed class SistemaController : ControllerBase
     {
         estado = "activo",
         servicio = "SAT DTE - API",
-        release = 3,
+        release = 4,
         contribuyentes = _rtu.Listar().Length,
         solicitudes = _facturas.Cantidad
     });

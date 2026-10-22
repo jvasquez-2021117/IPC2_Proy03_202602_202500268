@@ -1,3 +1,5 @@
+using System.Text;
+using SatDte.Core.Exportacion;
 using SatDte.Core.Estructuras;
 using SatDte.Core.Modelos;
 using SatDte.Core.Persistencia;
@@ -310,11 +312,59 @@ try
     Afirmar(auditoriaFechaInvalida.TotalRecibidas == 1 &&
         auditoriaFechaInvalida.Dias[0].Errores.FechaInvalida == 1,
         "Fechas DTE inválidas se auditan según fecha de recepción Guatemala");
+    Console.WriteLine("\nPRUEBAS RELEASE 4 — EXPORTACION PDF");
+    GeneradorReportesPdf exportador = new();
+    byte[] pdfContribuyente = exportador.Contribuyente(emitidas);
+    byte[] pdfIva = exportador.Iva(ivaQuince);
+    byte[] pdfRango = exportador.Rango(montosTotales);
+    byte[] pdfSinIva = exportador.Rango(montosSinIva);
+    byte[] pdfRecepciones = exportador.Recepciones(auditoria);
+
+    bool EsPdf(byte[] documento) => documento.Length > 800 &&
+        Encoding.ASCII.GetString(documento, 0, 5) == "%PDF-" &&
+        Encoding.ASCII.GetString(documento).Contains("startxref") &&
+        Encoding.ASCII.GetString(documento).Contains("%%EOF");
+    Afirmar(EsPdf(pdfContribuyente), "PDF valido para facturas por contribuyente");
+    Afirmar(EsPdf(pdfIva), "PDF valido para resumen de IVA");
+    Afirmar(EsPdf(pdfRango), "PDF valido para resumen por rango de fechas");
+    Afirmar(EsPdf(pdfSinIva), "PDF valido para resumen sin IVA");
+    Afirmar(EsPdf(pdfRecepciones), "PDF valido para auditoria de recepciones");
+    Afirmar(Encoding.Latin1.GetString(pdfContribuyente).Contains("R3-001") &&
+        Encoding.Latin1.GetString(pdfContribuyente).Contains("420.00"),
+        "PDF del contribuyente incluye referencias y total facturado");
+    Afirmar(Encoding.Latin1.GetString(pdfIva).Contains("IVA emitido") &&
+        Encoding.Latin1.GetString(pdfIva).Contains("36.00"),
+        "PDF de IVA presenta indicadores reales");
+    Afirmar(Encoding.Latin1.GetString(pdfRango).Contains("476.00") &&
+        Encoding.Latin1.GetString(pdfSinIva).Contains("425.00"),
+        "PDF refleja el filtro seleccionado con y sin IVA");
+    Afirmar(Encoding.Latin1.GetString(pdfRecepciones).Contains("IVA mal calculado") &&
+        Encoding.Latin1.GetString(pdfRecepciones).Contains("TOTAL mal calculado"),
+        "PDF de recepciones incluye ambos errores de calculo");
+    ReporteContribuyente reporteLargo = new()
+    {
+        Nit = "7378106", Nombre = "Empresa ABC", Tipo = "emitidas",
+        FechaInicio = quince, FechaFin = dieciseis,
+        Facturas = Enumerable.Range(1, 135).Select(i => new FacturaConsultada
+        {
+            Fecha = quince, Referencia = "MASIVA-" + i.ToString("D3"),
+            NitContraparte = "8338817", CodigoAprobacion = 2026102100000001 + i,
+            Valor = 100m, Iva = 12m, Total = 112m
+        }).ToList()
+    };
+    byte[] pdfLargo = exportador.Contribuyente(reporteLargo);
+    Afirmar(EsPdf(pdfLargo) && Encoding.Latin1.GetString(pdfLargo).Contains("MASIVA-135") &&
+        Encoding.Latin1.GetString(pdfLargo).Contains("continuacion"),
+        "Tablas PDF extensas se distribuyen en varias paginas");
+    Afirmar(EsPdf(exportador.Iva(new ResumenIvaFecha { Fecha = quince })) &&
+        EsPdf(exportador.Rango(new ResumenRangoFechas { FechaInicio = quince, FechaFin = dieciseis })),
+        "Los PDF tambien funcionan sin movimientos");
+
     recuperadoReportes.Reiniciar();
     Afirmar(reportePersistido.ConsultarRango(quince, dieciseis, false).MontoTotalAutorizado == 0m,
         "Reportes cambian al inicializar las solicitudes");
 
-    Console.WriteLine($"\nRESULTADO: {pasadas} verificaciones correctas. Releases 1, 2 y 3 OK.");
+    Console.WriteLine($"\nRESULTADO: {pasadas} verificaciones correctas. Releases 1, 2, 3 y 4 OK.");
     return 0;
 }
 catch (Exception ex)

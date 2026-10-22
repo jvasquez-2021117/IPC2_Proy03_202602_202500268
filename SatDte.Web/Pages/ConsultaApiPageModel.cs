@@ -2,6 +2,7 @@ using System.Globalization;
 using System.Net.Http.Json;
 using System.Text.Json;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using Microsoft.AspNetCore.Mvc;
 
 namespace SatDte.Web.Pages;
 
@@ -54,4 +55,28 @@ public abstract class ConsultaApiPageModel : PageModel
         catch (JsonException) { Error = "La API devolvió datos JSON inesperados."; }
         return default;
     }
+    /// <summary>Reenvía el PDF de la API sin acceder a la capa de datos.</summary>
+    protected async Task<IActionResult> DescargarPdfAsync(string ruta, string archivo)
+    {
+        try
+        {
+            using HttpClient cliente = _clientes.CreateClient("SatApi");
+            using HttpResponseMessage respuesta = await cliente.GetAsync(ruta);
+            if (!respuesta.IsSuccessStatusCode)
+                return new BadRequestObjectResult("La API no pudo generar el PDF. Comprueba los filtros.");
+            byte[] datos = await respuesta.Content.ReadAsByteArrayAsync();
+            if (datos.Length < 8 || !System.Text.Encoding.ASCII.GetString(datos, 0, 5).Equals("%PDF-"))
+                return new BadRequestObjectResult("La API no devolvió un PDF válido.");
+            return File(datos, "application/pdf", archivo);
+        }
+        catch (HttpRequestException)
+        {
+            return new BadRequestObjectResult("No hay conexión con la API del puerto 5175.");
+        }
+        catch (TaskCanceledException)
+        {
+            return new BadRequestObjectResult("La API tardó demasiado en generar el PDF.");
+        }
+    }
+
 }

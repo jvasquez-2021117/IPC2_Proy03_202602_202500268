@@ -17,11 +17,16 @@
 @if (Model.Error is not null) { <div class="alert alert-error" role="alert">@Model.Error</div> }
 @if (Model.Reporte is not null)
 {
-    <div class="report-head"><h2>Reporte: @Model.Reporte.FechaInicio.ToString("dd/MM/yyyy") - @Model.Reporte.FechaFin.ToString("dd/MM/yyyy")</h2><span class="pill pill-blue">@(Model.Reporte.Modo == "total" ? "Con IVA" : "Sin IVA")</span></div>
+    <div class="report-head"><h2>Reporte: @Model.Reporte.FechaInicio.ToString("dd/MM/yyyy") - @Model.Reporte.FechaFin.ToString("dd/MM/yyyy")</h2><div class="report-actions"><span class="pill pill-blue">@(Model.Reporte.Modo == "total" ? "Con IVA" : "Sin IVA")</span><a class="button button-secondary" asp-page-handler="Pdf" asp-route-Inicio="@Model.Inicio" asp-route-Fin="@Model.Fin" asp-route-Modo="@Model.Modo">Descargar PDF ↓</a></div></div>
     <div class="kpi-grid">
         <div class="kpi"><span>Facturas autorizadas</span><strong>@Model.Reporte.CantidadTotalFacturas</strong></div>
         <div class="kpi"><span>Valor autorizado en el período</span><strong>@Model.Reporte.MontoTotalAutorizado.ToString("N2")</strong></div>
     </div>
+    <section class="panel report-panel chart-panel">
+        <div class="table-heading"><div><strong>Gráfica de montos por fecha</strong><p>Visualización del total autorizado según los filtros elegidos.</p></div></div>
+        <div class="chart-scroll">@Html.Raw(SatDte.Web.Servicios.GraficasSvg.Fechas(Model.Reporte))</div>
+        @if (Model.Reporte.Dias.Count > 30) { <p class="chart-note">La gráfica muestra los primeros 30 días con movimiento; la tabla incluye todos.</p> }
+    </section>
     <section class="panel report-panel">
         @if (Model.Reporte.Dias.Count == 0) { <div class="empty-state"><p>No hay facturas aprobadas en el rango indicado.</p></div> }
         else
