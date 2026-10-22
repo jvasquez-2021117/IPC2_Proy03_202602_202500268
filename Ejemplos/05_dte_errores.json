@@ -1,0 +1,47 @@
+[
+  {
+    "TIEMPO": "Guatemala, 15/01/2025 15:25 hrs.",
+    "REFERENCIA": "ERR-IVA",
+    "NIT_EMISOR": "7378106",
+    "NIT_RECEPTOR": "8338817",
+    "VALOR": 100.00,
+    "IVA": 10.00,
+    "TOTAL": 110.00
+  },
+  {
+    "TIEMPO": "Guatemala, 15/01/2025 15:25 hrs.",
+    "REFERENCIA": "ERR-NIT",
+    "NIT_EMISOR": "7378107",
+    "NIT_RECEPTOR": "8338817",
+    "VALOR": 100.00,
+    "IVA": 12.00,
+    "TOTAL": 112.00
+  },
+  {
+    "TIEMPO": "Guatemala, 15/01/2025 15:25 hrs.",
+    "REFERENCIA": "ERR-TOTAL",
+    "NIT_EMISOR": "7378106",
+    "NIT_RECEPTOR": "8338817",
+    "VALOR": 100.00,
+    "IVA": 12.00,
+    "TOTAL": 120.00
+  },
+  {
+    "TIEMPO": "Guatemala, 15/01/2025 15:25 hrs.",
+    "REFERENCIA": "A1990",
+    "NIT_EMISOR": "7378106",
+    "NIT_RECEPTOR": "8338817",
+    "VALOR": 100.00,
+    "IVA": 12.00,
+    "TOTAL": 112.00
+  },
+  {
+    "TIEMPO": "Guatemala, 15/01/2025 25:25 hrs.",
+    "REFERENCIA": "ERR-FECHA",
+    "NIT_EMISOR": "7378106",
+    "NIT_RECEPTOR": "8338817",
+    "VALOR": 100.00,
+    "IVA": 12.00,
+    "TOTAL": 112.00
+  }
+]

@@ -1,0 +1,41 @@
+@page
+@model SatDte.Web.Pages.SolicitudesModel
+@{
+    ViewData["Title"] = "Historial DTE";
+}
+<div class="page-eyebrow">AUDITORÍA DE SOLICITUDES</div>
+<h1 class="page-title">Historial de facturas</h1>
+<p class="page-description">Últimas 100 solicitudes procesadas por la API, incluyendo aprobaciones y motivos de rechazo. Se conservan al reiniciar las aplicaciones.</p>
+<section class="panel">
+    @if (!string.IsNullOrEmpty(Model.Error))
+    {
+        <div class="alert alert-error" role="alert">@Model.Error</div>
+    }
+    else if (Model.Solicitudes.Count == 0)
+    {
+        <div class="empty-state"><h2>Aún no hay solicitudes</h2><p>Carga el RTU y luego envía facturas desde el módulo DTE.</p><a asp-page="/Dte">Enviar DTE →</a></div>
+    }
+    else
+    {
+        <div class="table-heading"><strong>Solicitudes guardadas</strong><span class="record-count">@Model.Solicitudes.Count resultados</span></div>
+        <div class="table-responsive">
+            <table>
+                <thead><tr><th>#</th><th>Referencia</th><th>Emisor</th><th>Receptor</th><th>Total</th><th>Estado</th><th>Código / errores</th></tr></thead>
+                <tbody>
+                @foreach (var factura in Model.Solicitudes)
+                {
+                    <tr>
+                        <td>@factura.NumeroSolicitud</td>
+                        <td><code>@factura.Referencia</code></td>
+                        <td>@factura.NitEmisor</td>
+                        <td>@factura.NitReceptor</td>
+                        <td>@(factura.Total?.ToString("N2") ?? "—")</td>
+                        <td><span class="mini-status" style="@(factura.Aprobada ? "" : "background:#fff0f2;color:#ad3047")">@(factura.Aprobada ? "Aprobada" : "Rechazada")</span></td>
+                        <td>@(factura.Aprobada ? factura.CodigoAprobacion?.ToString() : string.Join(", ", factura.Errores))</td>
+                    </tr>
+                }
+                </tbody>
+            </table>
+        </div>
+    }
+</section>

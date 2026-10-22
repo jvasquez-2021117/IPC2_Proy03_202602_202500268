@@ -4,12 +4,13 @@ using SatDte.Core.Servicios;
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllers();
-builder.Services.AddSingleton(new ArchivoRtu(
-    Path.Combine(builder.Environment.ContentRootPath, "App_Data", "rtu.json")));
+string datos = Path.Combine(builder.Environment.ContentRootPath, "App_Data");
+builder.Services.AddSingleton(new ArchivoRtu(Path.Combine(datos, "rtu.json")));
+builder.Services.AddSingleton(new ArchivoFacturas(Path.Combine(datos, "solicitudes.json")));
 builder.Services.AddSingleton<ServicioRtu>();
+builder.Services.AddSingleton<ServicioFacturas>();
 
 var app = builder.Build();
-
-// La API no depende del sitio Razor; se puede usar con Postman y otros clientes HTTP.
 app.MapControllers();
+// Asignar un puerto distinto al de Razor Pages incluso si VS no carga launchSettings.
 app.Run("http://localhost:5175");

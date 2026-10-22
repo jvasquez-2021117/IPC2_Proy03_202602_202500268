@@ -7,23 +7,30 @@ namespace SatDte.Api.Controllers;
 [Route("api/sistema")]
 public sealed class SistemaController : ControllerBase
 {
-    private readonly ServicioRtu _servicio;
+    private readonly ServicioRtu _rtu;
+    private readonly ServicioFacturas _facturas;
 
-    public SistemaController(ServicioRtu servicio) => _servicio = servicio;
+    public SistemaController(ServicioRtu rtu, ServicioFacturas facturas)
+    {
+        _rtu = rtu;
+        _facturas = facturas;
+    }
 
     [HttpGet("estado")]
     public IActionResult Estado() => Ok(new
     {
         estado = "activo",
         servicio = "SAT DTE - API",
-        release = 1,
-        contribuyentes = _servicio.Listar().Length
+        release = 2,
+        contribuyentes = _rtu.Listar().Length,
+        solicitudes = _facturas.Cantidad
     });
 
     [HttpPost("inicializar")]
     public IActionResult Inicializar()
     {
-        _servicio.Reiniciar();
-        return Ok(new { mensaje = "Datos del sistema inicializados correctamente." });
+        _facturas.Reiniciar();
+        _rtu.Reiniciar();
+        return Ok(new { mensaje = "RTU y solicitudes de facturas inicializados correctamente." });
     }
 }

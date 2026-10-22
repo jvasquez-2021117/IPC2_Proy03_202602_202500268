@@ -21,7 +21,7 @@ public sealed class InicializarModel : PageModel
                 Error = $"La API devolvió {(int)respuesta.StatusCode}: " + await respuesta.Content.ReadAsStringAsync();
                 return;
             }
-            Mensaje = "El RTU se inicializó correctamente. Puedes consultar la lista para comprobar que está vacía.";
+            Mensaje = "El RTU y el historial DTE fueron inicializados correctamente.";
         }
         catch (HttpRequestException)
         {

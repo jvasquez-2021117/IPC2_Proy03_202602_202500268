@@ -1,0 +1,20 @@
+[
+  {
+    "TIEMPO": "Guatemala, 15/01/2025 15:25 hrs.",
+    "REFERENCIA": "A1990",
+    "NIT_EMISOR": "7378106",
+    "NIT_RECEPTOR": "8338817",
+    "VALOR": 100.00,
+    "IVA": 12.00,
+    "TOTAL": 112.00
+  },
+  {
+    "TIEMPO": "Guatemala, 15/01/2025 15:25 hrs.",
+    "REFERENCIA": "A1991",
+    "NIT_EMISOR": "7378106",
+    "NIT_RECEPTOR": "8338817",
+    "VALOR": 200.00,
+    "IVA": 24.00,
+    "TOTAL": 224.00
+  }
+]

@@ -1,0 +1,57 @@
+@page
+@model SatDte.Web.Pages.DteModel
+@{
+    ViewData["Title"] = "Enviar autorizaciones";
+}
+<div class="page-eyebrow">DOCUMENTOS TRIBUTARIOS ELECTRÓNICOS</div>
+<h1 class="page-title">Solicitar autorizaciones DTE</h1>
+<p class="page-description">Envía un archivo JSON con una o varias facturas. Se revisan fecha y hora, NIT, RTU, referencia única, IVA y total. El código de autorización se genera con el correlativo del día.</p>
+<div class="two-column">
+    <section class="panel">
+        <div class="panel-header"><span class="panel-step">02</span><div><h2>Archivo de facturas</h2><p>Formato .json · Hasta 2 MB</p></div></div>
+        <form method="post" enctype="multipart/form-data">
+            <label class="file-drop" for="archivoDte">
+                <span class="file-icon" aria-hidden="true">↑</span>
+                <strong>Selecciona el archivo JSON</strong>
+                <span id="archivoNombre">Haz clic para explorar</span>
+                <input asp-for="Archivo" id="archivoDte" type="file" accept=".json,application/json" required />
+            </label>
+            <button type="submit" class="button button-primary full-width">Enviar solicitudes a la API →</button>
+        </form>
+        <div class="sample-link"><a href="~/ejemplos/04_dte_correctos.json" download>Descargar ejemplo: autorizaciones válidas</a></div>
+        <div class="sample-link"><a href="~/ejemplos/05_dte_errores.json" download>Descargar ejemplo: facturas con errores</a></div>
+        @if (!string.IsNullOrEmpty(Model.Error))
+        {
+            <div class="alert alert-error" role="alert"><strong>Error de envío</strong><p>@Model.Error</p></div>
+        }
+        @if (!string.IsNullOrEmpty(Model.RespuestaJson))
+        {
+            <div class="alert alert-success" role="status"><strong>La API procesó el lote</strong><p>Consulta también el historial para conocer los rechazos individuales.</p></div>
+            <pre class="json-output">@Model.RespuestaJson</pre>
+        }
+        <p class="sample-link"><a asp-page="/Solicitudes">Ver historial de solicitudes y sus errores →</a></p>
+    </section>
+    <aside class="panel panel-help">
+        <div class="panel-header"><span class="panel-step alt">i</span><div><h2>Formato esperado</h2><p>Entrada original definida en el enunciado</p></div></div>
+        <pre class="json-example">[
+  {
+    "TIEMPO": "Guatemala, 15/01/2025 15:25 hrs.",
+    "REFERENCIA": "A1990",
+    "NIT_EMISOR": "7378106",
+    "NIT_RECEPTOR": "8338817",
+    "VALOR": 100.00,
+    "IVA": 12.00,
+    "TOTAL": 112.00
+  }
+]</pre>
+        <h3>Validaciones aplicadas</h3>
+        <ul class="rules-list"><li>Fecha real y hora 00:00 a 23:59.</li><li>Referencia única, con un máximo de 40 caracteres.</li><li>Ambos NIT deben ser válidos y existir en el RTU.</li><li>IVA = REDONDEAR(VALOR × 0.12, 2).</li><li>TOTAL = VALOR + IVA.</li><li>Una aprobación válida usa el siguiente correlativo disponible.</li></ul>
+    </aside>
+</div>
+@section Scripts {
+<script>
+    document.getElementById('archivoDte')?.addEventListener('change', function () {
+        document.getElementById('archivoNombre').textContent = this.files?.[0]?.name || 'Haz clic para explorar';
+    });
+</script>
+}

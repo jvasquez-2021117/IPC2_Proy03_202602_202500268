@@ -6,9 +6,9 @@
 <div class="page-eyebrow">SISTEMA DE AUTORIZACIÓN TRIBUTARIA</div>
 <div class="hero">
     <div>
-        <span class="pill pill-blue">Release 01 / 04</span>
+        <span class="pill pill-blue">Release 02 / 04</span>
         <h1>Tu centro de control <span class="highlight">tributario.</span></h1>
-        <p>Simulador académico con servicios HTTP, almacenamiento persistente y validación de NIT. Esta primera entrega implementa el Registro Tributario Unificado (RTU).</p>
+        <p>Simulador académico con servicios HTTP, almacenamiento persistente y validación de NIT. Esta segunda entrega incorpora autorizaciones DTE, validación de facturas y persistencia del historial.</p>
         <div class="hero-actions"><a class="button button-primary" asp-page="/Rtu">Cargar contribuyentes <span aria-hidden="true">→</span></a><a class="button button-secondary" asp-page="/Contribuyentes">Ver RTU</a></div>
     </div>
     <div class="hero-figure" aria-hidden="true"><div class="figure-chip">API</div><div class="figure-line"></div><div class="figure-ring"><span>JSON</span></div><div class="figure-caption">HTTP ↔ Razor Pages</div></div>
@@ -16,8 +16,8 @@
 <div class="section-heading"><div><div class="page-eyebrow">FUNCIONALIDADES</div><h2>Módulos del proyecto</h2></div><span class="subdued">Progreso por entregas</span></div>
 <div class="module-grid">
     <article class="module-card"><div class="module-icon blue">01</div><span class="pill pill-green">Disponible</span><h3>Registro tributario (RTU)</h3><p>Importación de JSON, verificación del dígito NIT, altas, actualizaciones y persistencia.</p><a asp-page="/Rtu" class="card-link">Abrir módulo →</a></article>
-    <article class="module-card"><div class="module-icon violet">02</div><span class="pill pill-muted">Release 2</span><h3>Autorizaciones DTE</h3><p>Validaciones de facturas, correlativos únicos y respuestas de autorización.</p><span class="card-link disabled">Próxima entrega</span></article>
+    <article class="module-card"><div class="module-icon violet">02</div><span class="pill pill-green">Disponible</span><h3>Autorizaciones DTE</h3><p>Validaciones de facturas, correlativos únicos y respuestas de autorización.</p><a asp-page="/Dte" class="card-link">Abrir módulo →</a></article>
     <article class="module-card"><div class="module-icon amber">03</div><span class="pill pill-muted">Release 3</span><h3>Consultas y resúmenes</h3><p>Movimientos por NIT, facturas emitidas / recibidas e IVA por fechas.</p><span class="card-link disabled">Próxima entrega</span></article>
     <article class="module-card"><div class="module-icon emerald">04</div><span class="pill pill-muted">Release 4</span><h3>Gráficas y PDF</h3><p>Visualizaciones, informes descargables y documentación final del sistema.</p><span class="card-link disabled">Entrega final</span></article>
 </div>
-<div class="tip"><strong>Consejo de prueba:</strong> primero carga el ejemplo JSON del RTU; después revisa los contribuyentes persistidos y reinicia ambas aplicaciones para verificar que los datos siguen ahí.</div>
+<div class="tip"><strong>Consejo de prueba:</strong> primero carga los NIT del RTU, luego envía DTE válidos y con errores y consulta el historial.</div>
