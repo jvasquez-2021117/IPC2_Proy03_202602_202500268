@@ -1,0 +1,54 @@
+@page
+@model SatDte.Web.Pages.RtuModel
+@{
+    ViewData["Title"] = "Enviar RTU";
+}
+<div class="page-eyebrow">ADMINISTRACIÓN DE CONTRIBUYENTES</div>
+<h1 class="page-title">Actualización del RTU</h1>
+<p class="page-description">Envía un archivo JSON con un arreglo de contribuyentes. La API valida cada NIT, agrega los nuevos, actualiza los existentes y descarta los inválidos.</p>
+<div class="two-column">
+    <section class="panel">
+        <div class="panel-header"><span class="panel-step">01</span><div><h2>Seleccionar archivo</h2><p>Formato <code>.json</code> · Máximo 2 MB</p></div></div>
+        <form method="post" enctype="multipart/form-data">
+            <label class="file-drop" for="archivo">
+                <span class="file-icon" aria-hidden="true">↑</span>
+                <strong>Seleccionar archivo JSON</strong>
+                <span id="nombre-archivo">Haz clic para explorar tus archivos</span>
+                <input asp-for="Archivo" id="archivo" type="file" accept=".json,application/json" required />
+            </label>
+            <button type="submit" class="button button-primary full-width">Enviar solicitud a la API →</button>
+        </form>
+        <div class="sample-link">¿Primera prueba? <a href="~/ejemplos/01_rtu_inicial.json" download>Descarga el JSON de ejemplo</a></div>
+        @if (!string.IsNullOrEmpty(Model.Error))
+        {
+            <div class="alert alert-error" role="alert"><strong>No se pudo procesar la solicitud</strong><p>@Model.Error</p></div>
+        }
+        @if (!string.IsNullOrEmpty(Model.RespuestaJson))
+        {
+            <div class="alert alert-success" role="status"><strong>Solicitud procesada correctamente</strong><p>La API devolvió el siguiente mensaje:</p></div>
+            <pre class="json-output">@Model.RespuestaJson</pre>
+        }
+    </section>
+    <aside class="panel panel-help">
+        <div class="panel-header"><span class="panel-step alt">i</span><div><h2>Formato requerido</h2><p>Entrada JSON sin modificaciones</p></div></div>
+        <pre class="json-example">[
+  {
+    "NIT": "7378106",
+    "nombre": "Empresa ABC, S.A."
+  },
+  {
+    "NIT": "8338817",
+    "nombre": "Comercial XYZ, S.A."
+  }
+]</pre>
+        <h3>Reglas principales</h3>
+        <ul class="rules-list"><li>Entre 1 y 20 dígitos base más verificador.</li><li>El verificador puede ser un número o la letra K.</li><li>Si el NIT ya existe, se actualiza su nombre.</li><li>Los NIT inválidos no alteran el RTU.</li><li>Los registros correctos permanecen tras reiniciar.</li></ul>
+    </aside>
+</div>
+@section Scripts {
+<script>
+    document.getElementById('archivo')?.addEventListener('change', function () {
+        document.getElementById('nombre-archivo').textContent = this.files?.[0]?.name || 'Haz clic para explorar tus archivos';
+    });
+</script>
+}

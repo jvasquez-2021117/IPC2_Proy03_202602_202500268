@@ -1,0 +1,32 @@
+@page
+@model SatDte.Web.Pages.ContribuyentesModel
+@{
+    ViewData["Title"] = "Contribuyentes";
+}
+<div class="page-eyebrow">REGISTRO TRIBUTARIO UNIFICADO</div>
+<div class="page-row"><div><h1 class="page-title">Contribuyentes registrados</h1><p class="page-description">Información recuperada directamente del servicio HTTP. Se conserva entre ejecuciones.</p></div><a class="button button-primary" asp-page="/Rtu">+ Cargar JSON</a></div>
+@if (!string.IsNullOrEmpty(Model.Error))
+{
+    <div class="alert alert-error" role="alert">@Model.Error</div>
+}
+else
+{
+    <section class="panel">
+        <div class="table-heading"><div><strong>Directorio RTU</strong><p>Registros válidos almacenados</p></div><span class="record-count">@Model.Contribuyentes.Length registros</span></div>
+        @if (Model.Contribuyentes.Length == 0)
+        {
+            <div class="empty-state"><span>◎</span><h2>Sin contribuyentes todavía</h2><p>Carga el archivo de ejemplo del RTU para comenzar.</p><a asp-page="/Rtu" class="button button-secondary">Ir a carga de RTU</a></div>
+        }
+        else
+        {
+            <div class="table-responsive"><table><thead><tr><th>#</th><th>NIT</th><th>Nombre del contribuyente</th><th>Estado</th></tr></thead><tbody>
+                @{ int numero = 0; }
+                @foreach (var contribuyente in Model.Contribuyentes)
+                {
+                    numero++;
+                    <tr><td class="index-cell">@numero</td><td><code>@contribuyente.Nit</code></td><td>@contribuyente.Nombre</td><td><span class="mini-status"><span class="status-dot"></span>Válido</span></td></tr>
+                }
+            </tbody></table></div>
+        }
+    </section>
+}

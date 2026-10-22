@@ -1,0 +1,13 @@
+# Visual Studio / dotnet
+.vs/
+**/bin/
+**/obj/
+*.user
+*.suo
+TestResults/
+# Datos persistidos generados en ejecución
+SatDte.Api/App_Data/*.json
+SatDte.Api/App_Data/*.tmp
+# Temporales de edición
+.DS_Store
+Thumbs.db

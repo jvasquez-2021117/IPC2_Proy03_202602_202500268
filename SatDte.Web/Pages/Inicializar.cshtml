@@ -1,0 +1,24 @@
+@page
+@model SatDte.Web.Pages.InicializarModel
+@{
+    ViewData["Title"] = "Inicializar";
+}
+<div class="page-eyebrow">MANTENIMIENTO DEL SISTEMA</div>
+<h1 class="page-title">Inicializar información</h1>
+<p class="page-description">Devuelve la aplicación al estado inicial a través de la API, tal como solicita el enunciado.</p>
+<section class="panel danger-panel">
+    <div class="danger-icon">!</div>
+    <h2>Reiniciar los datos del RTU</h2>
+    <p>Se eliminarán todos los contribuyentes del registro. Este procedimiento sobrescribe el archivo de datos persistentes y <strong>no puede deshacerse</strong>.</p>
+    @if (!string.IsNullOrEmpty(Model.Mensaje))
+    {
+        <div class="alert alert-success" role="status">@Model.Mensaje</div>
+    }
+    @if (!string.IsNullOrEmpty(Model.Error))
+    {
+        <div class="alert alert-error" role="alert">@Model.Error</div>
+    }
+    <form method="post" onsubmit="return confirm('¿Confirmas eliminar TODOS los contribuyentes del RTU?');">
+        <button class="button button-danger" type="submit">Reiniciar información del RTU</button>
+    </form>
+</section>

@@ -1,0 +1,45 @@
+@{
+    string titulo = ViewData["Title"] as string ?? "Inicio";
+    string ruta = Context.Request.Path.Value?.ToLowerInvariant() ?? "";
+}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content="Simulador SAT DTE - Proyecto 3 IPC2" />
+    <title>@titulo · SAT DTE</title>
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+</head>
+<body>
+    <div class="app-shell">
+        <aside class="sidebar">
+            <a asp-page="/Index" class="brand">
+                <span class="brand-symbol">S</span>
+                <span><strong>SAT <span class="brand-accent">DTE</span></strong><small>Simulador académico</small></span>
+            </a>
+            <div class="nav-heading">PLATAFORMA</div>
+            <nav aria-label="Navegación principal" class="nav-stack">
+                <a asp-page="/Index" class="nav-link @(ruta == "/" ? "active" : "")"><span class="nav-icon">▦</span>Inicio</a>
+                <a asp-page="/Rtu" class="nav-link @(ruta == "/rtu" ? "active" : "")"><span class="nav-icon">⇧</span>Enviar RTU</a>
+                <a asp-page="/Contribuyentes" class="nav-link @(ruta == "/contribuyentes" ? "active" : "")"><span class="nav-icon">◎</span>Contribuyentes</a>
+                <a asp-page="/Inicializar" class="nav-link @(ruta == "/inicializar" ? "active" : "")"><span class="nav-icon">↻</span>Inicializar</a>
+            </nav>
+            <div class="nav-heading secondary">RECURSOS</div>
+            <nav class="nav-stack" aria-label="Ayuda">
+                <a asp-page="/Ayuda" class="nav-link @(ruta == "/ayuda" ? "active" : "")"><span class="nav-icon">?</span>Ayuda</a>
+            </nav>
+            <div class="sidebar-bottom"><span class="status-dot"></span>Release 1 de 4 <small>API + RTU</small></div>
+        </aside>
+        <div class="work-area">
+            <header class="topbar">
+                <div><span class="topbar-label">IPC2 · PROYECTO 03</span><span class="topbar-divider">/</span><strong>@titulo</strong></div>
+                <span class="environment-label">ENTORNO LOCAL</span>
+            </header>
+            <main class="content" id="main-content">@RenderBody()</main>
+            <footer class="site-footer">Proyecto 3 · USAC · Simulador de Documentos Tributarios Electrónicos</footer>
+        </div>
+    </div>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>
